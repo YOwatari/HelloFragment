@@ -7,27 +7,42 @@ import android.support.v4.app.DialogFragment;
 
 public class ProgressDialogFragment extends DialogFragment {
 	
-	public static ProgressDialogFragment newInstance(int title) {
-		ProgressDialogFragment frag = new ProgressDialogFragment();
-		Bundle args = new Bundle();
-		args.putInt("title", title);
-		frag.setArguments(args);
-		return frag;
-	}
+	public final static String TITLE = "Title";
+	public final static String MESSAGE = "Message";
+	public final static String MAX = "Max";
 	
-	@Override
-	public void onCreate(Bundle savedInstanceBundle) {
-		super.onCreate(savedInstanceBundle);
+	private static ProgressDialog progressDialog;
+	
+	
+	static ProgressDialogFragment newInstance() {
+		ProgressDialogFragment f = new ProgressDialogFragment();
+		
+		return f;
 	}
 
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceBundle) {
-		ProgressDialog dialog = new ProgressDialog((ResultActivity)getActivity());
+		if (progressDialog != null)
+			return progressDialog;
 		
-		dialog.setMessage("searching...");
-		dialog.setProgress(ProgressDialog.STYLE_SPINNER);
-		dialog.show();
-		
-		return dialog;
+		setCancelable(false);
+		progressDialog = new ProgressDialog(getActivity());
+		progressDialog.setTitle(getArguments().getString(TITLE));
+		progressDialog.setMessage(getArguments().getString(MESSAGE));
+		progressDialog.setIndeterminate(true);
+		progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+		//progressDialog.setMax(getArguments().getInt(MAX));
+		//progressDialog.setProgress(0);
+		return progressDialog;
+	}
+	
+	public void updateProgress(int value) {
+		if (progressDialog != null)
+			progressDialog.setProgress(value);
+	}
+	
+	@Override
+	public Dialog getDialog() {
+		return progressDialog;
 	}
 }
